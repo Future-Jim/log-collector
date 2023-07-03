@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import os
 import subprocess
+import sys
 import time
 
 def sshcmd(host, command, user = None):
@@ -58,7 +60,7 @@ def grepcmd(grep_input, command):
                             check=True)
     return result
 
-def file_write(file_input, filename):
+def file_write(file_input, filename, logs_path):
     ''' Writes to file with specified filename
     Args:
         file_input: data to be written to file
@@ -67,6 +69,8 @@ def file_write(file_input, filename):
         None
      
     '''
+
+    os.chdir(logs_path)
     with open(filename, "a") as o:
         o.write("LOGGING: " + time.strftime("%I:%M%p on %B %d, %Y\n"))
         o.write("HOST %s: " % i)
@@ -74,8 +78,14 @@ def file_write(file_input, filename):
         o.write("\n")
         
 
+def log_path():
+    path = os.path.abspath("logs")
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+        
 if __name__ == '__main__':
-    
+    logs_path = log_path()
     C1= ' cd /var/log && cat SSH.log'
     C2= '{print $0}'
     C3= '([0-9]{1,3}[\.]){3}(89)'
@@ -89,6 +99,6 @@ if __name__ == '__main__':
             p1 = sshcmd(i.strip(), C1)
             p2 = awkcmd(p1.stdout, C2)
             p3 = grepcmd(p2.stdout, C3)
-            p4 = file_write(p3.stdout, filename)
+            p4 = file_write(p3.stdout, filename, logs_path)
 
 

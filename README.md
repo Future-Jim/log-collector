@@ -3,8 +3,7 @@
 
 ## Requirements
 ### server_list.txt
-+ A list of servers hostnames or IPs
-+ e.g.
++ A list of servers hostnames or IPs, for example.
 ```
 10.0.1.5
 10.0.1.56
